@@ -42,7 +42,7 @@ async function verifyPin(e) {
       document.getElementById("pin-modal").classList.remove("open");
       loadAdminData();
     } else {
-      alert("Invalid PIN. Default is 1234");
+      alert("Invalid PIN. Please try again.");
     }
   } catch (err) {
     alert("Authentication failed: " + err.message);

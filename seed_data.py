@@ -488,7 +488,7 @@ def seed():
         "whatsapp_number": "919818854321",
         "delivery_area": "Fortune Residency, Rajnagar Extension",
         "delivery_eta": "5 - 8 Mins",
-        "admin_pin": "1234"
+        "admin_pin": "2607"
     }
     for k, v in default_settings.items():
         update_setting(k, v)

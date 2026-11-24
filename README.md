@@ -8,9 +8,9 @@ A hyper-local, society-first quick commerce platform designed specifically for *
 
 Your store is currently hosted live on the web:
 
-- **Live Public Storefront**: [https://land-combinations-vocabulary-needs.trycloudflare.com](https://land-combinations-vocabulary-needs.trycloudflare.com)
-- **Live Public Merchant Admin**: [https://land-combinations-vocabulary-needs.trycloudflare.com/admin](https://land-combinations-vocabulary-needs.trycloudflare.com/admin) *(PIN: `1234`)*
-- **Live Order Tracking**: [https://land-combinations-vocabulary-needs.trycloudflare.com/track](https://land-combinations-vocabulary-needs.trycloudflare.com/track)
+- **Live 24/7 Cloud Storefront**: [https://guruji-supermart.onrender.com](https://guruji-supermart.onrender.com)
+- **Live 24/7 Merchant Admin**: [https://guruji-supermart.onrender.com/admin](https://guruji-supermart.onrender.com/admin) *(PIN: `2607`)*
+- **Live Order Tracking**: [https://guruji-supermart.onrender.com/track](https://guruji-supermart.onrender.com/track)
 - **Local Address**: `http://localhost:8000`
 
 ---

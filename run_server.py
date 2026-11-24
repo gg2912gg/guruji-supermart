@@ -27,7 +27,7 @@ if __name__ == "__main__":
     print("=" * 65)
     print(f" Customer Webstore:      http://localhost:{port}")
     print(f" On Mobile / Society:    http://{local_ip}:{port}")
-    print(f" Merchant Admin Portal:  http://localhost:{port}/admin (PIN: 1234)")
+    print(f" Merchant Admin Portal:  http://localhost:{port}/admin (PIN: 2607)")
     print(f" Live Order Tracking:    http://localhost:{port}/track")
     print("=" * 65)
     print(" Press Ctrl+C to stop the store server.")

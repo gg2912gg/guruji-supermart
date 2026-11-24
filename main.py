@@ -284,7 +284,7 @@ async def get_orders_by_phone(phone_number: str):
 @app.post("/api/admin/verify-pin")
 async def verify_admin_pin(payload: PinVerifyRequest):
     settings = db.get_settings()
-    stored_pin = settings.get("admin_pin", "1234")
+    stored_pin = settings.get("admin_pin", "2607")
     if payload.pin.strip() == stored_pin:
         return {"success": True, "token": "admin-session-ok"}
     raise HTTPException(status_code=401, detail="Invalid Admin PIN")
