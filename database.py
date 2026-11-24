@@ -117,6 +117,16 @@ def init_db():
     );
     """)
 
+    # Column migrations for existing databases
+    cursor.execute("PRAGMA table_info(orders)")
+    existing_cols = [r["name"] for r in cursor.fetchall()]
+    if "subtotal" not in existing_cols:
+        cursor.execute("ALTER TABLE orders ADD COLUMN subtotal REAL NOT NULL DEFAULT 0.0")
+    if "coupon_code" not in existing_cols:
+        cursor.execute("ALTER TABLE orders ADD COLUMN coupon_code TEXT DEFAULT ''")
+    if "discount_amount" not in existing_cols:
+        cursor.execute("ALTER TABLE orders ADD COLUMN discount_amount REAL DEFAULT 0.0")
+
     conn.commit()
     conn.close()
 
