@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Guruji Supermart | Merchant Control & Dispatch</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <style>
+    body { background-color: #f1f5f9; padding-bottom: 40px; }
+    .admin-navbar {
+      background: #0a0f1d;
+      color: white;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .admin-brand { display: flex; align-items: center; gap: 10px; }
+    .admin-brand h2 { font-size: 17px; font-weight: 850; }
+    .admin-stats-grid {
+      max-width: 1200px;
+      margin: 16px auto;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .admin-stat-card {
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid #e2e8f0;
+      box-shadow: var(--shadow-sm);
+    }
+    .admin-stat-card span { font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase; }
+    .admin-stat-card h3 { font-size: 24px; font-weight: 900; color: #0f172a; margin-top: 4px; }
+    .admin-nav-bar {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+    }
+    .admin-nav-tab {
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px 10px 0 0;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 750;
+      color: #475569;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .admin-nav-tab.active {
+      background: #0c831f;
+      color: white;
+      border-color: #0c831f;
+    }
+    .admin-content-box {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    .admin-order-card {
+      background: white;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 14px;
+      border: 1px solid #e2e8f0;
+      box-shadow: var(--shadow-sm);
+    }
+    .admin-order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 10px;
+    }
+    .status-pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .status-received { background: #fef3c7; color: #b45309; }
+    .status-packing { background: #e0e7ff; color: #4338ca; }
+    .status-delivery { background: #dbeafe; color: #1d4ed8; }
+    .status-delivered { background: #dcfce7; color: #15803d; }
+    .status-cancelled { background: #fee2e2; color: #b91c1c; }
+    .btn-action-status {
+      border: none;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-status-packing { background: #4338ca; color: white; }
+    .btn-status-delivery { background: #1d4ed8; color: white; }
+    .btn-status-delivered { background: #0c831f; color: white; }
+    .btn-status-cancel { background: #ef4444; color: white; }
+    .btn-micro { padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 650; border: none; }
+    .admin-order-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 12px;
+    }
+    .inv-table-wrapper {
+      background: white;
+      border-radius: 14px;
+      overflow-x: auto;
+      border: 1px solid #e2e8f0;
+    }
+    table.inv-table { width: 100%; border-collapse: collapse; text-align: left; }
+    table.inv-table th, table.inv-table td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; }
+    table.inv-table th { background: #f8fafc; font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 750; }
+    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; inset: 0; background-color: #cbd5e1;
+      transition: .3s; border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+      background-color: white; transition: .3s; border-radius: 50%;
+    }
+    input:checked + .slider { background-color: #0c831f; }
+    input:checked + .slider:before { transform: translateX(20px); }
+  </style>
+</head>
+<body>
+
+  <!-- Admin Top Bar -->
+  <nav class="admin-navbar">
+    <div class="admin-brand">
+      <span style="font-size: 24px;">🏪</span>
+      <div>
+        <h2>Guruji Supermart</h2>
+        <span style="font-size: 11px; color: #94a3b8;">Fortune Residency Store Admin & Dispatch</span>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <a href="/" target="_blank" class="btn-micro" style="background: #1e293b; color: white; border: 1px solid #475569; text-decoration: none;">
+        🌐 View Live Webstore
+      </a>
+      <button class="btn-micro" style="background: #334155; color: #cbd5e1; cursor: pointer;" onclick="adminLogout()">
+        🔒 Lock
+      </button>
+    </div>
+  </nav>
+
+  <!-- Live Statistics Overview -->
+  <section class="admin-stats-grid">
+    <div class="admin-stat-card">
+      <span>Today's Total Sales</span>
+      <h3 id="stat-today-sales" style="color: #0c831f;">₹0</h3>
+    </div>
+    <div class="admin-stat-card">
+      <span>Orders Placed Today</span>
+      <h3 id="stat-today-orders">0</h3>
+    </div>
+    <div class="admin-stat-card">
+      <span>Pending Flat Deliveries</span>
+      <h3 id="stat-pending-orders" style="color: #f59e0b;">0</h3>
+    </div>
+    <div class="admin-stat-card">
+      <span>In-Stock Products</span>
+      <h3 id="stat-total-products">0</h3>
+    </div>
+    <div class="admin-stat-card">
+      <span>Active Coupons</span>
+      <h3 id="stat-active-coupons" style="color: #6366f1;">0</h3>
+    </div>
+  </section>
+
+  <!-- Quick Store Open/Closed Toggle Bar -->
+  <div style="max-width: 1200px; margin: 0 auto 16px auto; padding: 0 16px;">
+    <div style="background: white; border-radius: 14px; padding: 12px 18px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <label class="switch">
+          <input type="checkbox" id="toggle-store-open">
+          <span class="slider"></span>
+        </label>
+        <strong id="store-open-label" style="font-size: 14px; color: #0f172a;">Store OPEN (Taking Orders)</strong>
+      </div>
+      <span style="font-size: 11px; color: #64748b;">Turn OFF if shop is closed for lunch or night</span>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="admin-nav-bar">
+    <button class="admin-nav-tab active" data-target="panel-orders">
+      📋 Live Orders & Dispatch
+    </button>
+    <button class="admin-nav-tab" data-target="panel-inventory">
+      📦 Inventory Management
+    </button>
+    <button class="admin-nav-tab" data-target="panel-coupons">
+      🎟️ Coupons & Discounts
+    </button>
+    <button class="admin-nav-tab" data-target="panel-delivery-fee">
+      🚚 Delivery Fee & Tiers
+    </button>
+    <button class="admin-nav-tab" data-target="panel-buckets">
+      🪣 Bucket & Batch Item Adder
+    </button>
+    <button class="admin-nav-tab" data-target="panel-societies">
+      🏢 Societies List
+    </button>
+    <button class="admin-nav-tab" data-target="panel-settings">
+      ⚙️ Store Settings
+    </button>
+  </div>
+
+  <div class="admin-content-box">
+
+    <!-- TAB 1: LIVE ORDERS & DISPATCH -->
+    <div id="panel-orders" class="admin-view-panel">
+      <div style="background: white; border-radius: 12px; padding: 12px; border: 1px solid #e2e8f0; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+          <button class="order-filter-pill btn-micro active" data-status="ALL" style="background: #0c831f; color: white; cursor: pointer;">All</button>
+          <button class="order-filter-pill btn-micro" data-status="RECEIVED" style="background: #f1f5f9; color: #334155; cursor: pointer;">📋 Received</button>
+          <button class="order-filter-pill btn-micro" data-status="PACKING" style="background: #f1f5f9; color: #334155; cursor: pointer;">📦 Packing</button>
+          <button class="order-filter-pill btn-micro" data-status="OUT_FOR_DELIVERY" style="background: #f1f5f9; color: #334155; cursor: pointer;">🛵 In Delivery</button>
+          <button class="order-filter-pill btn-micro" data-status="DELIVERED" style="background: #f1f5f9; color: #334155; cursor: pointer;">🎉 Delivered</button>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 12px; color: #64748b;">Filter Society:</span>
+          <select id="order-society-filter" class="form-select" style="padding: 6px 10px; font-size: 12px; width: auto;">
+            <option value="ALL">All Societies</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="admin-orders-list">
+        <!-- Injected order cards -->
+      </div>
+    </div>
+
+    <!-- TAB 2: INVENTORY MANAGEMENT -->
+    <div id="panel-inventory" class="admin-view-panel" style="display: none;">
+      <div style="background: white; border-radius: 12px; padding: 14px; border: 1px solid #e2e8f0; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; gap: 8px; flex: 1; min-width: 280px;">
+          <input type="text" id="inventory-search" class="form-input" placeholder="Search product name..." style="padding: 8px 12px; font-size: 13px;">
+          <select id="inventory-cat-filter" class="form-select" style="padding: 8px 12px; font-size: 13px; width: auto;">
+            <option value="ALL">All Categories</option>
+            <option value="Dairy, Bread & Eggs">Dairy, Bread & Eggs</option>
+            <option value="Daily Staples & Atta">Daily Staples & Atta</option>
+            <option value="Biscuits & Munchies">Biscuits & Munchies</option>
+            <option value="Cold Drinks & Instant Mix">Cold Drinks & Instant Mix</option>
+            <option value="Cleaning & Household">Cleaning & Household</option>
+            <option value="Personal & Baby Care">Personal & Baby Care</option>
+            <option value="Pooja Needs & Spices">Pooja Needs & Spices</option>
+          </select>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span id="inventory-count-badge" style="font-size: 12px; color: #64748b; font-weight: 700;"></span>
+          <button class="btn-primary-action" style="padding: 8px 14px; font-size: 13px;" onclick="document.getElementById('new-product-modal').classList.add('open')">
+            + Add New Product
+          </button>
+        </div>
+      </div>
+
+      <div class="inv-table-wrapper">
+        <table class="inv-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Unit / Pack</th>
+              <th>Selling Price</th>
+              <th>MRP</th>
+              <th>Stock Status (1-Click)</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="inventory-table-body">
+            <!-- Dynamic products -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: COUPONS & DISCOUNTS -->
+    <div id="panel-coupons" class="admin-view-panel" style="display: none;">
+      <div style="background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h3 style="font-size: 18px; font-weight: 850; color: #0f172a;">🎟️ Coupon Code & Discount Management</h3>
+            <p style="font-size: 12.5px; color: #64748b; margin-top: 2px;">Create promo codes with min order value conditions and terms for Fortune Residency residents.</p>
+          </div>
+          <button class="btn-primary-action" style="width: auto; padding: 9px 16px; font-size: 13px;" onclick="document.getElementById('new-coupon-modal').classList.add('open')">
+            + Create New Coupon
+          </button>
+        </div>
+
+        <div class="inv-table-wrapper">
+          <table class="inv-table">
+            <thead>
+              <tr>
+                <th>Coupon Code & Title</th>
+                <th>Discount</th>
+                <th>Min Order Required</th>
+                <th>Terms & Conditions</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="coupons-table-body">
+              <!-- Dynamic coupons -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: DELIVERY FEE & TIER PRICING -->
+    <div id="panel-delivery-fee" class="admin-view-panel" style="display: none;">
+      <div style="background: white; border-radius: 16px; padding: 22px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+        <h3 style="font-size: 18px; font-weight: 850; color: #0f172a; margin-bottom: 4px;">
+          🚚 Tiered Delivery Fee Pricing
+        </h3>
+        <p style="font-size: 12.5px; color: #64748b; margin-bottom: 16px;">
+          Motivate residents to order more by offering tiered delivery pricing with a FREE delivery milestone!
+        </p>
+
+        <div id="delivery-tiers-container" style="margin-bottom: 20px;">
+          <!-- Active delivery tiers -->
+        </div>
+
+        <div style="background: #f8fafc; border-radius: 14px; padding: 18px; border: 1px solid #e2e8f0;">
+          <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 12px;">Quick Tier Pricing Editor</h4>
+          <form id="tier-pricing-form">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 14px;">
+              <div class="form-group">
+                <label>Delivery Fee for Cart under ₹100</label>
+                <input type="number" id="tier1-fee" class="form-input" value="15" required>
+              </div>
+              <div class="form-group">
+                <label>Delivery Fee for Cart ₹100 – ₹199</label>
+                <input type="number" id="tier2-fee" class="form-input" value="10" required>
+              </div>
+              <div class="form-group">
+                <label>Free Delivery Minimum Threshold (₹)</label>
+                <input type="number" id="tier-free-threshold" class="form-input" value="200" required>
+              </div>
+            </div>
+            <button type="submit" class="btn-primary-action" style="width: auto; padding: 11px 22px;">
+              💾 Save Tier Delivery Pricing
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: BUCKET & BATCH ADDER -->
+    <div id="panel-buckets" class="admin-view-panel" style="display: none;">
+      <div style="background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+        <h3 style="font-size: 18px; font-weight: 850; color: #0f172a; margin-bottom: 6px;">
+          🪣 1-Click Bucket Presets
+        </h3>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">
+          Add pre-curated buckets of high-demand items to your inventory in 1 tap.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;" id="bucket-presets-container">
+          <!-- Injected bucket presets -->
+        </div>
+      </div>
+
+      <div style="background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0;">
+        <h3 style="font-size: 17px; font-weight: 850; color: #0f172a; margin-bottom: 6px;">
+          📝 Quick Bulk Paste Adder
+        </h3>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
+          Paste items line-by-line: <code>Item Name, Unit, Selling Price, MRP, Category</code>
+        </p>
+
+        <form id="bulk-text-form">
+          <textarea id="bulk-raw-text" class="form-input" rows="5" style="font-family: monospace; font-size: 12px;" 
+                    placeholder="Amul Taaza Milk, 500 ml, 27, 27, Dairy, Bread & Eggs&#10;Harvest Gold Bread, 400 g, 30, 30, Dairy, Bread & Eggs"></textarea>
+          <button type="submit" class="btn-primary-action" style="margin-top: 10px; padding: 12px;">
+            ⚡ Parse & Add All Items to Inventory
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- TAB 6: SOCIETIES -->
+    <div id="panel-societies" class="admin-view-panel" style="display: none;">
+      <div style="background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+        <h3 style="font-size: 18px; font-weight: 850; color: #0f172a; margin-bottom: 6px;">
+          🏢 Delivery Societies
+        </h3>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">
+          Currently set to <strong>Fortune Residency</strong>. You can add more societies according to your conditions anytime.
+        </p>
+
+        <form id="add-society-form" style="display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;">
+          <input type="text" id="new-soc-name" class="form-input" placeholder="New Society Name (e.g. Officer City 1 / KW Srishti)" style="flex: 2; min-width: 220px;" required>
+          <input type="number" id="new-soc-mins" class="form-input" placeholder="Delivery ETA (Mins)" value="10" style="width: 130px;" required>
+          <button type="submit" class="btn-primary-action" style="width: auto; padding: 10px 18px;">+ Add Society</button>
+        </form>
+
+        <div id="admin-societies-list">
+          <!-- Injected societies list -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 7: STORE SETTINGS -->
+    <div id="panel-settings" class="admin-view-panel" style="display: none;">
+      <div style="background: white; border-radius: 16px; padding: 24px; border: 1px solid #e2e8f0; max-width: 600px;">
+        <h3 style="font-size: 18px; font-weight: 850; color: #0f172a; margin-bottom: 16px;">⚙️ Store Profile & Contact</h3>
+
+        <form id="general-settings-form">
+          <div class="form-group">
+            <label>Store Name</label>
+            <input type="text" id="setting-store-name" class="form-input" value="Guruji Supermart" required>
+          </div>
+          <div class="form-group">
+            <label>Calling Phone Number</label>
+            <input type="text" id="setting-store-phone" class="form-input" value="+91 98188 54321" required>
+          </div>
+          <div class="form-group">
+            <label>Store WhatsApp Number (with country code, no +)</label>
+            <input type="text" id="setting-store-whatsapp" class="form-input" value="919818854321" required>
+          </div>
+          <div class="form-group">
+            <label>Minimum Order Value (₹) - Keep 0 for no minimum order!</label>
+            <input type="number" id="setting-min-order" class="form-input" value="0" required>
+          </div>
+          <button type="submit" class="btn-primary-action" style="margin-top: 10px;">Save Store Settings</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal: Create New Coupon -->
+  <div class="modal-overlay" id="new-coupon-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>🎟️ Create New Discount Coupon</h3>
+        <button class="modal-close-btn" onclick="document.getElementById('new-coupon-modal').classList.remove('open')">✕</button>
+      </div>
+
+      <form id="new-coupon-form">
+        <div class="form-group">
+          <label>Coupon Code <span class="req">*</span></label>
+          <input type="text" id="new-coupon-code" class="form-input" placeholder="e.g. FORTUNE40 / WELCOME30" style="text-transform: uppercase; font-weight: 800;" required>
+        </div>
+        <div class="form-group">
+          <label>Offer Title <span class="req">*</span></label>
+          <input type="text" id="new-coupon-title" class="form-input" placeholder="e.g. Flat ₹40 OFF on Grocery" required>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Discount Type <span class="req">*</span></label>
+            <select id="new-coupon-type" class="form-select">
+              <option value="FLAT">Flat Amount (₹)</option>
+              <option value="PERCENT">Percentage (%)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Discount Value <span class="req">*</span></label>
+            <input type="number" step="0.5" id="new-coupon-val" class="form-input" placeholder="40" required>
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Minimum Order Amount (₹)</label>
+            <input type="number" id="new-coupon-min" class="form-input" placeholder="199" value="0">
+          </div>
+          <div class="form-group">
+            <label>Max Discount Cap (₹)</label>
+            <input type="number" id="new-coupon-max" class="form-input" placeholder="0 (no limit)" value="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Terms & Conditions / Description</label>
+          <textarea id="new-coupon-terms" class="form-input" rows="2" placeholder="e.g. Valid on all grocery items above ₹199 for Fortune Residency residents."></textarea>
+        </div>
+        <button type="submit" class="btn-primary-action" style="margin-top: 10px;">Create & Activate Coupon</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add New Single Product -->
+  <div class="modal-overlay" id="new-product-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>+ Add Product to Inventory</h3>
+        <button class="modal-close-btn" onclick="document.getElementById('new-product-modal').classList.remove('open')">✕</button>
+      </div>
+
+      <form id="new-product-form">
+        <div class="form-group">
+          <label>Product Name <span class="req">*</span></label>
+          <input type="text" id="new-prod-name" class="form-input" placeholder="e.g. Amul Gold Milk 500ml" required>
+        </div>
+        <div class="form-group">
+          <label>Category <span class="req">*</span></label>
+          <select id="new-prod-cat" class="form-select" required>
+            <option value="Dairy, Bread & Eggs">Dairy, Bread & Eggs</option>
+            <option value="Daily Staples & Atta">Daily Staples & Atta</option>
+            <option value="Biscuits & Munchies">Biscuits & Munchies</option>
+            <option value="Cold Drinks & Instant Mix">Cold Drinks & Instant Mix</option>
+            <option value="Cleaning & Household">Cleaning & Household</option>
+            <option value="Personal & Baby Care">Personal & Baby Care</option>
+            <option value="Pooja Needs & Spices">Pooja Needs & Spices</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Unit / Pack Size <span class="req">*</span></label>
+          <input type="text" id="new-prod-unit" class="form-input" placeholder="e.g. 500 ml pouch / 1 kg pack" required>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Our Selling Price (₹) <span class="req">*</span></label>
+            <input type="number" step="0.5" id="new-prod-price" class="form-input" placeholder="33" required>
+          </div>
+          <div class="form-group">
+            <label>MRP (₹)</label>
+            <input type="number" step="0.5" id="new-prod-mrp" class="form-input" placeholder="33">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Image URL (Optional)</label>
+          <input type="url" id="new-prod-image" class="form-input" placeholder="https://...">
+        </div>
+        <button type="submit" class="btn-primary-action" style="margin-top: 10px;">Save Product to Shelf</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: PIN Authentication -->
+  <div class="modal-overlay" id="pin-modal">
+    <div class="modal-content" style="max-width: 380px; text-align: center;">
+      <div style="font-size: 40px; margin-bottom: 8px;">🔒</div>
+      <h3 style="font-size: 18px; font-weight: 850; margin-bottom: 6px;">Merchant Portal Access</h3>
+      <p style="font-size: 12px; color: #64748b; margin-bottom: 16px;">
+        Enter your 4-digit Store PIN (Default is <strong>1234</strong>)
+      </p>
+
+      <form id="pin-form">
+        <input type="password" id="admin-pin-input" class="form-input" placeholder="PIN" maxlength="4" style="text-align: center; font-size: 24px; letter-spacing: 8px;" autofocus required>
+        <button type="submit" class="btn-primary-action" style="margin-top: 14px;">Unlock Dashboard ➔</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/js/admin.js"></script>
+</body>
+</html>

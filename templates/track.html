@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Live Order Tracking | Guruji Supermart</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <style>
+    .track-container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 0 16px;
+    }
+    .track-card {
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid #e2e8f0;
+      margin-bottom: 20px;
+    }
+    .stepper-wrapper {
+      margin: 24px 0;
+      position: relative;
+    }
+    .track-step {
+      display: flex;
+      gap: 16px;
+      padding-bottom: 24px;
+      position: relative;
+    }
+    .track-step:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 17px;
+      top: 36px;
+      bottom: 0;
+      width: 2px;
+      background: #e2e8f0;
+    }
+    .track-step.completed:not(:last-child)::before {
+      background: #22c55e;
+    }
+    .step-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      color: #94a3b8;
+      border: 2px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      flex-shrink: 0;
+      z-index: 2;
+    }
+    .track-step.active .step-circle {
+      background: #0c831f;
+      border-color: #0c831f;
+      color: white;
+      animation: pulseGlow 1.5s infinite;
+      box-shadow: 0 0 0 4px rgba(12, 131, 31, 0.2);
+    }
+    .track-step.completed .step-circle {
+      background: #22c55e;
+      border-color: #22c55e;
+      color: white;
+    }
+    .step-content strong {
+      display: block;
+      font-size: 14px;
+      color: #0f172a;
+    }
+    .step-content p {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+    .status-highlight-banner {
+      background: linear-gradient(135deg, #0c831f, #15803d);
+      color: white;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .status-highlight-banner h2 {
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .status-highlight-banner p {
+      font-size: 12px;
+      margin-top: 6px;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div class="top-society-banner">
+    <span>📍 Guruji Supermart • Fortune Residency</span>
+    <span>⚡ 5-8 Min Doorstep Society Delivery</span>
+  </div>
+
+  <header class="store-header">
+    <div class="header-container">
+      <div class="header-top">
+        <a href="/" class="brand-wrapper">
+          <div class="brand-logo-icon">🛒</div>
+          <div class="brand-text">
+            <h1>Guruji Supermart</h1>
+            <p>Live Order Dispatch & Tracking</p>
+          </div>
+        </a>
+        <a href="/" class="btn-add-item" style="text-decoration: none;">+ Order More</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="track-container">
+
+    <!-- Active Order Live Screen -->
+    <div id="track-detail-section" style="display: none;">
+      
+      <div class="status-highlight-banner">
+        <h2 id="current-status-title">Order Status</h2>
+        <p id="current-status-desc">Loading live delivery status...</p>
+      </div>
+
+      <div class="track-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px;">
+          <div>
+            <span style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 700;">Order ID</span>
+            <h3 id="display-order-id" style="font-size: 18px; font-weight: 800; color: #0f172a;">#GKS-...</h3>
+          </div>
+          <span id="display-order-time" style="font-size: 11px; color: #64748b;">...</span>
+        </div>
+
+        <!-- 4 Step Stepper -->
+        <div class="stepper-wrapper">
+          <div class="track-step" id="step-received">
+            <div class="step-circle">📋</div>
+            <div class="step-content">
+              <strong>Order Received</strong>
+              <p>Store has accepted your order and picked items.</p>
+            </div>
+          </div>
+
+          <div class="track-step" id="step-packing">
+            <div class="step-circle">📦</div>
+            <div class="step-content">
+              <strong>Packing & Bagging</strong>
+              <p>Items packed safely at Guruji Kripa Supermart.</p>
+            </div>
+          </div>
+
+          <div class="track-step" id="step-out_for_delivery">
+            <div class="step-circle">🛵</div>
+            <div class="step-content">
+              <strong>Out for Delivery (In Society)</strong>
+              <p>Delivery boy inside society, taking lift to your flat.</p>
+            </div>
+          </div>
+
+          <div class="track-step" id="step-delivered">
+            <div class="step-circle">🎉</div>
+            <div class="step-content">
+              <strong>Delivered to Doorstep</strong>
+              <p>Delivered to your flat. Enjoy your essentials!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Society & Flat Details -->
+        <div style="background: #f8fafc; border-radius: 12px; padding: 14px; border: 1px solid #e2e8f0; margin-top: 10px;">
+          <h4 style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 700; margin-bottom: 6px;">Delivering To:</h4>
+          <p id="display-customer-name" style="font-weight: 700; font-size: 14px; color: #0f172a;"></p>
+          <p id="display-customer-phone" style="font-size: 12px; color: #475569; margin-bottom: 6px;"></p>
+          <p id="display-delivery-address" style="font-size: 13px; color: #1e293b; line-height: 1.4;"></p>
+        </div>
+
+        <!-- Items Summary -->
+        <div style="margin-top: 18px;">
+          <h4 style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 700; margin-bottom: 10px;">Items in this Order</h4>
+          <div id="order-items-list">
+            <!-- Injected items -->
+          </div>
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 10px; border-top: 1.5px solid #0f172a;">
+            <div>
+              <strong style="font-size: 16px; color: #0f172a;">Total Amount</strong>
+              <p id="display-payment-info" style="font-size: 11px; color: #64748b;"></p>
+            </div>
+            <strong id="display-total-amount" style="font-size: 20px; font-weight: 800; color: #0c831f;">₹0</strong>
+          </div>
+        </div>
+
+        <!-- Direct Actions -->
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <a id="btn-wa-inquire" href="#" target="_blank" class="btn-primary-action" style="flex: 1; text-decoration: none; background: #25D366;">
+            💬 WhatsApp Store
+          </a>
+          <a href="tel:+919818854321" class="btn-primary-action" style="flex: 1; text-decoration: none; background: #1e293b;">
+            📞 Call Store
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone Number Lookup / Search Section -->
+    <div id="track-search-section" class="track-card">
+      <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">🔍 Track Your Society Order</h3>
+      <p style="font-size: 12px; color: #64748b; margin-bottom: 16px;">Enter your 10-digit mobile number to view active & past orders placed with Guruji Kripa Supermart.</p>
+
+      <form id="phone-track-form">
+        <div class="form-group">
+          <label for="phone-input">Mobile Number</label>
+          <input type="tel" id="phone-input" class="form-input" placeholder="Enter 10-digit mobile number" maxlength="10" required>
+        </div>
+        <button type="submit" class="btn-primary-action">Find My Orders ➔</button>
+      </form>
+
+      <div id="phone-results-list" style="margin-top: 18px;">
+        <!-- Injected results -->
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="store-footer">
+    <div class="footer-links">
+      <a href="/">Home Store</a>
+      <a href="/track">Track Order</a>
+      <a href="/admin">Store Admin</a>
+    </div>
+    <p><strong>Guruji Kripa Supermart</strong> • Rajnagar Extension, Ghaziabad</p>
+  </footer>
+
+  <script src="/static/js/track.js"></script>
+</body>
+</html>
