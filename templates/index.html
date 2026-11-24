@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Guruji Supermart | Fortune Residency 5-8 Min Society Delivery</title>
-  <meta name="description" content="Order daily groceries, dairy, milk, bread & snacks from Guruji Supermart. Ultra-fast 5-8 minute delivery straight to your flat in Fortune Residency, Rajnagar Extension.">
+  <title>Guruji Supermart | Fortune Residency 5-8 Min Delivery</title>
+  <meta name="description" content="Order daily groceries, dairy, milk, bread & snacks from Guruji Supermart. Fast 5-8 minute delivery inside Fortune Residency with zero minimum order.">
   <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
 
-  <!-- Top Announcement Bar -->
+  <!-- Minimal Clean Top Banner -->
   <div class="top-society-banner">
-    <span>📍 Delivering inside <strong>Fortune Residency</strong> • Flat-to-Doorstep</span>
-    <span id="store-status-badge"><span class="live-beacon"></span> Open Now • 5-8m Delivery</span>
+    <span>📍 Delivering inside <strong>Fortune Residency</strong></span>
+    <span id="store-status-badge"><span class="live-beacon"></span> 5-8 Mins</span>
   </div>
 
   <!-- Store Header -->
@@ -20,14 +20,10 @@
     <div class="header-container">
       <div class="header-top">
         <a href="/" class="brand-wrapper">
-          <div class="brand-logo-icon">🛒</div>
-          <div class="brand-text">
-            <h1>Guruji Supermart</h1>
-            <p>Your Society's Local Supermart • Zero Min Order</p>
-          </div>
+          <img src="/static/images/logo.png" alt="Guruji Supermart - Daily Necessities • Better Living" class="brand-logo-img">
         </a>
 
-        <div class="header-actions" style="display: flex; align-items: center; gap: 8px;">
+        <div class="header-actions">
           <button class="society-badge-pill" id="header-society-pill" onclick="openSocietyModal()">
             📍 Fortune Residency
           </button>
@@ -38,7 +34,7 @@
         </div>
       </div>
 
-      <!-- Quick-Commerce Search Bar -->
+      <!-- Quick Commerce Search Bar -->
       <div class="search-wrapper">
         <span class="search-icon">🔍</span>
         <input type="text" id="search-input" class="search-input" placeholder="Search Milk, Amul, Bread, Atta, Maggi, Snacks, Cold Drinks...">
@@ -47,36 +43,24 @@
     </div>
   </header>
 
-  <!-- Quick Promo Badges Carousel (Blinkit / Zepto Style) -->
-  <section class="promo-strip-wrapper">
-    <div class="promo-strip">
-      <div class="promo-pill-card">
-        <div class="promo-icon-circle">⚡</div>
-        <div class="promo-info">
-          <strong>5-8 Min Doorstep Delivery</strong>
-          <p>Direct lift-to-flat inside Fortune Residency</p>
-        </div>
+  <!-- Clean, Compact Feature Chips Strip -->
+  <section class="features-strip-wrapper">
+    <div class="features-strip">
+      <div class="feature-chip">
+        <span class="icon">⚡</span>
+        <span><strong>5-8 Min</strong> Delivery</span>
       </div>
-      <div class="promo-pill-card">
-        <div class="promo-icon-circle">🪙</div>
-        <div class="promo-info">
-          <strong>Zero Minimum Order Value</strong>
-          <p>Order even 1 milk pouch or single bread loaf!</p>
-        </div>
+      <div class="feature-chip">
+        <span class="icon">🪙</span>
+        <span><strong>Zero</strong> Min Order</span>
       </div>
-      <div class="promo-pill-card">
-        <div class="promo-icon-circle">🏷️</div>
-        <div class="promo-info">
-          <strong>Special Society Coupons</strong>
-          <p>Use codes GURUJI20 & WELCOME50 for instant discounts</p>
-        </div>
+      <div class="feature-chip">
+        <span class="icon">🏷️</span>
+        <span>Special <strong class="highlight">Coupons</strong></span>
       </div>
-      <div class="promo-pill-card">
-        <div class="promo-icon-circle">🛡️</div>
-        <div class="promo-info">
-          <strong>Zero Platform Fee</strong>
-          <p>Save ₹20-₹30 compared to Zepto/Blinkit</p>
-        </div>
+      <div class="feature-chip">
+        <span class="icon">🛡️</span>
+        <span><strong>₹0</strong> Handling Fee</span>
       </div>
     </div>
   </section>
@@ -91,8 +75,8 @@
   <!-- Products Main Grid -->
   <main class="main-container">
     <div class="section-header">
-      <h2 class="section-title" id="section-title">Daily Essentials & Fresh Groceries</h2>
-      <span id="item-count-label" style="font-size: 12px; font-weight: 700; color: #64748b;">Loading products...</span>
+      <h2 class="section-title" id="section-title">Daily Necessities & Fresh Groceries</h2>
+      <span id="item-count-label" style="font-size: 12px; font-weight: 700; color: #5b6b82;">Loading products...</span>
     </div>
 
     <div class="product-grid" id="products-grid">
@@ -130,8 +114,8 @@
       <!-- Coupon Code Box in Cart -->
       <div id="cart-coupon-box" class="coupon-section" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <strong style="font-size: 13px; color: #92400e;">🎟️ Have a Coupon Code?</strong>
-          <span style="font-size: 11px; color: #b45309;">Apply for discount</span>
+          <strong style="font-size: 13px; color: #b43b00;">🎟️ Have a Coupon Code?</strong>
+          <span style="font-size: 11px; color: #ff5722; font-weight: 700;">Apply for discount</span>
         </div>
 
         <div class="coupon-input-row">
@@ -154,7 +138,11 @@
         </div>
         <div class="bill-row">
           <span>Delivery Charge</span>
-          <span id="summary-delivery-fee" style="font-weight: 700; color: #0c831f;">FREE</span>
+          <span id="summary-delivery-fee" style="font-weight: 750; color: #16a34a;">FREE</span>
+        </div>
+        <div class="bill-row">
+          <span>Platform & Handling Fee</span>
+          <span style="color: #16a34a; font-weight: 750;">₹0 (Saved ₹25 compared to others)</span>
         </div>
         <div class="bill-row savings" id="summary-coupon-row" style="display: none;">
           <span id="summary-coupon-name">Coupon Discount</span>
@@ -182,13 +170,13 @@
       <div class="modal-header">
         <div>
           <h3>🏢 Society Flat Delivery</h3>
-          <p style="font-size: 11px; color: #64748b;">Direct lift delivery inside Fortune Residency</p>
+          <p style="font-size: 11px; color: #5b6b82;">Direct delivery inside Fortune Residency</p>
         </div>
         <button class="modal-close-btn" onclick="closeCheckoutModal()">✕</button>
       </div>
 
       <form id="society-checkout-form">
-        <div style="background: #ecfdf5; padding: 10px 14px; border-radius: 12px; margin-bottom: 14px; font-size: 12px; color: #166534; font-weight: 700; border: 1px solid #a7f3d0;">
+        <div style="background: var(--primary-navy-light); padding: 10px 14px; border-radius: 12px; margin-bottom: 14px; font-size: 12px; color: var(--primary-navy); font-weight: 750; border: 1px solid #c2d6f0;">
           ⚡ Delivery in 5-8 Minutes • Total Payable: <strong id="checkout-total-badge">₹0</strong>
         </div>
 
@@ -228,11 +216,11 @@
         <div class="form-group" style="margin-top: 6px;">
           <label>Payment Mode</label>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <label style="flex: 1; min-width: 130px; display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 1.5px solid #cbd5e1; padding: 10px 12px; border-radius: 10px; font-size: 12px; cursor: pointer;">
+            <label style="flex: 1; min-width: 130px; display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 1.5px solid var(--border); padding: 10px 12px; border-radius: 10px; font-size: 12px; cursor: pointer;">
               <input type="radio" name="payment-method" value="COD" checked>
               <strong>💵 Cash on Delivery</strong>
             </label>
-            <label style="flex: 1; min-width: 130px; display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 1.5px solid #cbd5e1; padding: 10px 12px; border-radius: 10px; font-size: 12px; cursor: pointer;">
+            <label style="flex: 1; min-width: 130px; display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 1.5px solid var(--border); padding: 10px 12px; border-radius: 10px; font-size: 12px; cursor: pointer;">
               <input type="radio" name="payment-method" value="UPI_DELIVERY">
               <strong>📲 UPI QR on Delivery</strong>
             </label>
@@ -258,7 +246,7 @@
       <div class="modal-header">
         <div>
           <h3>📍 Choose Your Society</h3>
-          <p style="font-size: 11px; color: #64748b;">Ultra-fast doorstep delivery</p>
+          <p style="font-size: 11px; color: #5b6b82;">Direct society delivery</p>
         </div>
         <button class="modal-close-btn" onclick="closeSocietyModal()">✕</button>
       </div>
@@ -274,10 +262,10 @@
       <a href="/">Home Store</a>
       <a href="/track">Track Order</a>
       <a href="https://wa.me/919818854321" target="_blank">WhatsApp Store</a>
-      <a href="/admin" target="_blank" style="color: #60a5fa;">Merchant Admin</a>
+      <a href="/admin" target="_blank" style="color: #ff9800;">Merchant Admin</a>
     </div>
-    <p><strong>Guruji Supermart</strong> • Serving Fortune Residency, Rajnagar Extension</p>
-    <p style="font-size: 11px; margin-top: 6px; opacity: 0.7;">Zero Minimum Order Value • 5-8 Min Direct-to-Flat Delivery</p>
+    <p><strong>Guruji Supermart</strong> • Daily Necessities • Better Living</p>
+    <p style="font-size: 11px; margin-top: 6px; opacity: 0.8;">Delivering inside Fortune Residency, Rajnagar Extension</p>
   </footer>
 
   <script src="/static/js/app.js"></script>
