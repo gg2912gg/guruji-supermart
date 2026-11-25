@@ -198,8 +198,8 @@ function renderProducts() {
   }
 
   container.innerHTML = filtered.map(p => {
-    const cartItem = state.cart[p.id];
-    const qty = cartItem ? cartItem.quantity : 0;
+    const cartItem = state.cart[p.id] || state.cart[String(p.id)];
+    const qty = cartItem && cartItem.quantity > 0 ? cartItem.quantity : 0;
     const isOutOfStock = p.is_available === 0 || p.stock_quantity <= 0;
     const hasDiscount = p.mrp > p.price;
     const discountPercent = hasDiscount ? Math.round(((p.mrp - p.price) / p.mrp) * 100) : 0;
@@ -244,25 +244,51 @@ function renderProducts() {
 }
 
 // Cart Management
-function changeQuantity(productId, delta) {
-  const prod = state.products.find(p => p.id === productId);
-  if (!prod) return;
+async function changeQuantity(productId, delta) {
+  const pId = Number(productId);
+  const pKey = String(productId);
 
-  if (!state.cart[productId]) {
-    if (delta > 0) {
-      state.cart[productId] = { product: prod, quantity: delta };
+  // Retrieve item from cart using either key format
+  const existingItem = state.cart[pKey] || state.cart[pId];
+  const prod = state.products.find(p => p.id == productId) || (existingItem ? existingItem.product : null);
+
+  if (delta > 0) {
+    if (!existingItem) {
+      if (prod) {
+        state.cart[pKey] = { product: prod, quantity: delta };
+      }
+    } else {
+      existingItem.quantity += delta;
     }
-  } else {
-    state.cart[productId].quantity += delta;
-    if (state.cart[productId].quantity <= 0) {
-      delete state.cart[productId];
+  } else if (delta < 0) {
+    if (existingItem) {
+      existingItem.quantity += delta;
+      if (existingItem.quantity <= 0) {
+        delete state.cart[pKey];
+        delete state.cart[pId];
+      }
     }
   }
 
   saveCart();
   renderProducts();
-  updateCartUI();
-  revalidateCoupon();
+  await updateCartUI();
+  await revalidateCoupon();
+  renderCartModalItems();
+}
+
+function removeFromCart(productId) {
+  const pId = Number(productId);
+  const pKey = String(productId);
+  delete state.cart[pKey];
+  delete state.cart[pId];
+
+  saveCart();
+  renderProducts();
+  updateCartUI().then(() => {
+    revalidateCoupon();
+    renderCartModalItems();
+  });
 }
 
 function saveCart() {
@@ -274,7 +300,11 @@ function getCartTotals() {
   let subtotal = 0;
   let mrpTotal = 0;
 
-  Object.values(state.cart).forEach(item => {
+  Object.entries(state.cart).forEach(([key, item]) => {
+    if (!item || !item.product || item.quantity <= 0) {
+      delete state.cart[key];
+      return;
+    }
     count += item.quantity;
     subtotal += item.product.price * item.quantity;
     mrpTotal += (item.product.mrp || item.product.price) * item.quantity;
@@ -294,6 +324,8 @@ async function updateCartUI() {
     } catch (e) {
       console.error(e);
     }
+  } else {
+    state.deliveryInfo = { fee: 0, label: "Free Delivery", free_threshold: 0, amount_needed_for_free: 0 };
   }
 
   // Header cart button
@@ -372,6 +404,7 @@ function closeCartModal() {
 
 function renderCartModalItems() {
   const listEl = document.getElementById("cart-modal-items");
+  if (!listEl) return;
   const { count, subtotal, savings } = getCartTotals();
 
   if (count === 0) {
@@ -382,34 +415,42 @@ function renderCartModalItems() {
         <p style="font-size: 12px; color: #64748b; margin-top: 4px;">Add your favorite items for 5-8 min flat delivery in Fortune Residency!</p>
       </div>
     `;
-    document.getElementById("btn-proceed-checkout").style.display = "none";
-    document.getElementById("cart-modal-summary").style.display = "none";
-    document.getElementById("cart-coupon-box").style.display = "none";
+    const btnCheckout = document.getElementById("btn-proceed-checkout");
+    if (btnCheckout) btnCheckout.style.display = "none";
+    const modalSummary = document.getElementById("cart-modal-summary");
+    if (modalSummary) modalSummary.style.display = "none";
+    const couponBox = document.getElementById("cart-coupon-box");
+    if (couponBox) couponBox.style.display = "none";
     return;
   }
 
-  document.getElementById("btn-proceed-checkout").style.display = "flex";
-  document.getElementById("cart-modal-summary").style.display = "block";
-  document.getElementById("cart-coupon-box").style.display = "block";
+  const btnCheckout = document.getElementById("btn-proceed-checkout");
+  if (btnCheckout) btnCheckout.style.display = "flex";
+  const modalSummary = document.getElementById("cart-modal-summary");
+  if (modalSummary) modalSummary.style.display = "block";
+  const couponBox = document.getElementById("cart-coupon-box");
+  if (couponBox) couponBox.style.display = "block";
 
   listEl.innerHTML = Object.values(state.cart).map(item => `
     <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9;">
-      <div style="display: flex; align-items: center; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
         <img src="${item.product.image_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100'}" 
-             style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px;">
-        <div>
-          <h5 style="font-size: 13px; font-weight: 750; color: #1e293b;">${item.product.name}</h5>
+             style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px; flex-shrink: 0;"
+             onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?w=100'">
+        <div style="min-width: 0;">
+          <h5 style="font-size: 13px; font-weight: 750; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.product.name}</h5>
           <span style="font-size: 11px; color: #64748b;">${item.product.unit} • ₹${item.product.price}</span>
         </div>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: 8px;">
         <div class="qty-counter">
-          <button class="btn-qty" onclick="changeQuantity(${item.product.id}, -1)">−</button>
+          <button class="btn-qty" onclick="changeQuantity(${item.product.id}, -1)" title="Subtract">−</button>
           <span class="qty-value">${item.quantity}</span>
-          <button class="btn-qty" onclick="changeQuantity(${item.product.id}, 1)">+</button>
+          <button class="btn-qty" onclick="changeQuantity(${item.product.id}, 1)" title="Add">+</button>
         </div>
         <span style="font-size: 14px; font-weight: 800; color: #0f172a; min-width: 45px; text-align: right;">₹${item.product.price * item.quantity}</span>
+        <button class="btn-remove-cart-item" onclick="removeFromCart(${item.product.id})" title="Remove item" style="background: none; border: none; color: #94a3b8; font-size: 15px; cursor: pointer; padding: 4px; border-radius: 6px; line-height: 1; transition: color 0.15s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#94a3b8'">✕</button>
       </div>
     </div>
   `).join("");
@@ -472,18 +513,28 @@ function removeAppliedCoupon() {
 async function revalidateCoupon() {
   if (state.appliedCoupon) {
     const { subtotal } = getCartTotals();
-    const res = await fetch("/api/coupons/validate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code: state.appliedCoupon.code, cart_total: subtotal })
-    });
-    const data = await res.json();
-    if (data.valid) {
-      state.appliedCoupon.discount = data.discount;
-    } else {
+    if (subtotal <= 0) {
       state.appliedCoupon = null;
       const msgEl = document.getElementById("coupon-feedback-msg");
-      if (msgEl) msgEl.innerHTML = `<span style="color: #b91c1c; font-weight: 600;">${data.message}</span>`;
+      if (msgEl) msgEl.innerText = "";
+    } else {
+      try {
+        const res = await fetch("/api/coupons/validate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: state.appliedCoupon.code, cart_total: subtotal })
+        });
+        const data = await res.json();
+        if (data.valid) {
+          state.appliedCoupon.discount = data.discount;
+        } else {
+          state.appliedCoupon = null;
+          const msgEl = document.getElementById("coupon-feedback-msg");
+          if (msgEl) msgEl.innerHTML = `<span style="color: #b91c1c; font-weight: 600;">${data.message}</span>`;
+        }
+      } catch (err) {
+        console.error("Coupon revalidation failed:", err);
+      }
     }
   }
   updateBillDisplay();
@@ -627,6 +678,8 @@ async function submitOrder(e) {
     state.cart = {};
     state.appliedCoupon = null;
     saveCart();
+    renderProducts();
+    renderCartModalItems();
     updateCartUI();
     closeCheckoutModal();
 
